@@ -3,17 +3,10 @@ import { GameBoardActions } from '../../../store'
 import { MessageType } from '../../../MessageArea/MessageTypes'
 import { playTone } from '../../../sound'
 import { wait } from '../../helpers'
-import { isEnabled } from '../../index'
 
-export const cum: GameEvent = () => {
+export const tease: GameEvent = () => {
   return (state, dispatch) => {
-    let hasCock = state.settings.player.parts === PlayerParts.Cock
-    let release = state.settings.player.release < new Date()
-    let chaste = isEnabled('chastity', state)
-    let deny = false
-    if (chaste && !release) {
-      deny = Math.random() * 100 < state.settings.cum.ejaculateLikelihood / 2
-    }
+    let hasCock = state.settings.player.parts == PlayerParts.Cock
     dispatch(
       GameBoardActions.ShowMessage({
         type: MessageType.Prompt,
@@ -53,8 +46,7 @@ export const cum: GameEvent = () => {
               await wait(5000)
 
               /** Ejaculating */
-              let seed = Math.random() * 100
-              if (seed < state.settings.cum.ejaculateLikelihood && (!deny && release)) {
+              if (Math.random() * 100 < state.settings.cum.ejaculateLikelihood / 4) {
                 if (Math.random() * 100 < state.settings.cum.ruinLikelihood) {
                   /** Ruining */
                   dispatch(GameBoardActions.SetGrip(EGrip.none))
@@ -93,27 +85,24 @@ export const cum: GameEvent = () => {
                 /** No Ejaculation */
                 dispatch(GameBoardActions.SetGrip(EGrip.none))
                 dispatch(GameBoardActions.PauseGame())
-                dispatch(GameBoardActions.PauseEvents())
                 dispatch(
                   GameBoardActions.ShowMessage({
                     type: MessageType.NewEvent,
                     text: `$HANDS OFF! Do not cum.`,
                   }),
                 )
-                await wait(5000)
+                dispatch(GameBoardActions.PauseGame())
+                await wait(20000)
                 dispatch(
                   GameBoardActions.ShowMessage({
-                    type: MessageType.EventDescription,
-                    text: `Good $player. Let yourself ${hasCock ? 'go soft.' : 'cool off.'}`,
+                    type: MessageType.NewEvent,
+                    text: `Start ${hasCock ? 'stroking again.' : 'pawing again.'}`,
                   }),
                 )
-                await wait(5000)
-                dispatch(
-                  GameBoardActions.ShowMessage({
-                    type: MessageType.EventDescription,
-                    text: `${chaste ? 'Lock yourself up $player.' : 'Leave now.'}`,
-                  }),
-                )
+
+                dispatch(GameBoardActions.SetPace(state.settings.pace.min))
+                dispatch(GameBoardActions.ResumeGame())
+                await wait(15000)
               }
             },
           },
@@ -134,7 +123,7 @@ export const cum: GameEvent = () => {
                   text: `Start ${hasCock ? 'stroking again.' : 'pawing again.'}`,
                 }),
               )
-              dispatch(GameBoardActions.DecIntensity(100))
+              dispatch(GameBoardActions.DecIntensity(10))
               dispatch(GameBoardActions.SetPace(state.settings.pace.min))
               dispatch(GameBoardActions.ResumeGame())
               await wait(15000)

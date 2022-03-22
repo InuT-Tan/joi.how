@@ -7,12 +7,16 @@ import { doublePace } from './event-definitions/pace/doublePace'
 import { halfPace } from './event-definitions/pace/halfPace'
 import { cum } from './event-definitions/edging/cum'
 import { edge } from './event-definitions/edging/edge'
+import { tease } from './event-definitions/edging/tease'
+import { unlock, chastityGamble } from './event-definitions/tasks/chastity'
 import { cleanMess } from './event-definitions/tasks/cleanMess'
 import { pause } from './event-definitions/pace/pause'
 
 export const events = [
   { id: 'cum', name: 'Cum', description: 'Creates an end point to the game. Enable this to adjust ruin/cum/denial options.' },
   { id: 'edge', name: 'Edge Safety Net', description: "Slows down when intensity is almost at it's highest." },
+  { id: 'tease', name: 'Tease Me', description: 'Opportunity to cum at a severly decreased chance.' },
+  { id: 'chastity', name: 'Chastity Mode', description: 'Will lock you in chastity.' },
   { id: 'doublePace', name: 'Double Pace', description: 'Paw at twice the current pace for a few seconds.' },
   { id: 'halfPace', name: 'Half Pace', description: 'Paw at half the current pace for a few seconds.' },
   { id: 'pause', name: 'Pause', description: 'Stop stroking for a little bit.' },
@@ -35,6 +39,18 @@ export function getNextEvent(state: IState): ReturnType<GameEvent> | null {
     if (state.game.intensity >= 90 && !flags.hasEdged && isEnabled('edge', state)) {
       flags.hasEdged = true
       return edge()
+    }
+
+    if (chance(1, 55) && state.game.intensity >= 40 && isEnabled('tease', state)) {
+      return tease()
+    }
+
+    if (chance(1, 75) && state.game.intensity >= 75 && isEnabled('chastity', state)) {
+      return chastityGamble()
+    }
+
+    if (state.game.intensity >= 15 && isEnabled('chastity', state)) {
+      unlock()
     }
 
     if (chance(1, 10) && isEnabled('randomPace', state)) {
@@ -68,7 +84,7 @@ export function getNextEvent(state: IState): ReturnType<GameEvent> | null {
   return null
 }
 
-function isEnabled(eventKey: EventToken['id'], state: IState) {
+export function isEnabled(eventKey: EventToken['id'], state: IState) {
   return state.settings.eventList.indexOf(eventKey) > -1
 }
 

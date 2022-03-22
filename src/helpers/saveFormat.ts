@@ -15,6 +15,7 @@ export function applyAllSettings(dispatch: PropsForConnectedComponent['dispatch'
   if (settings.hypnoMode) dispatch(SettingsActions.SetHypnoMode(settings.hypnoMode))
   if (settings.player && settings.player.gender) dispatch(SettingsActions.SetPlayerGender(settings.player.gender))
   if (settings.player && settings.player.parts) dispatch(SettingsActions.SetPlayerParts(settings.player.parts))
+  if (settings.player && settings.player.release) dispatch(SettingsActions.SetPlayerRelease(settings.player.release))
   if (settings.pace && settings.pace.max) dispatch(SettingsActions.SetMaxPace(settings.pace.max))
   if (settings.pace && settings.pace.min) dispatch(SettingsActions.SetMinPace(settings.pace.min))
   if (settings.pornList) dispatch(SettingsActions.SetPornList(settings.pornList))
@@ -29,7 +30,7 @@ export function makeSave(settings: Partial<IState['settings']>) {
   const pornList: IState['settings']['pornList'] = settings.pornList || []
   const eventList: IState['settings']['eventList'] = settings.eventList || events.map((event) => event.id)
   const hypnoMode: IState['settings']['hypnoMode'] = settings.hypnoMode === undefined ? HypnoMode.JOI : settings.hypnoMode
-  const playerMode: IState['settings']['player'] = settings.player || { gender: PlayerGender.Male, parts: PlayerParts.Cock }
+  const player: IState['settings']['player'] =  settings.player || { gender: PlayerGender.Male, parts: PlayerParts.Cock, release: new Date() }
   const cum: IState['settings']['cum'] = settings.cum === undefined ? { ejaculateLikelihood: 100, ruinLikelihood: 0 } : settings.cum
   const walltakerLink: IState['settings']['walltakerLink'] = settings.walltakerLink ?? null
 
@@ -41,8 +42,9 @@ export function makeSave(settings: Partial<IState['settings']>) {
   output += `:P${pornList.reduce((acc, porn) => `${acc}${acc ? ',' : ''}${encodePorn(porn)}`, '')}`
   output += `:E{${eventList.reduce((acc, eventId) => `${acc}${acc ? ',' : ''}${eventId}`, '')}}`
   output += `:H${hypnoMode}`
-  output += `:PG${playerMode.gender}`
-  output += `:PP${playerMode.parts}`
+  output += `:PG${player.gender}`
+  output += `:PP${player.parts}`
+  output += `:PR${player.release}`
   output += `:CE${cum.ejaculateLikelihood}`
   output += `:CR${cum.ruinLikelihood}`
   if (walltakerLink) output += `:W${walltakerLink}`
@@ -59,7 +61,7 @@ export function unpackSave(base64Save: string): IState['settings'] {
     pornList: [],
     eventList: events.map((event) => event.id),
     hypnoMode: HypnoMode.JOI,
-    player: { gender: PlayerGender.Male, parts: PlayerParts.Cock },
+    player: { gender: PlayerGender.Male, parts: PlayerParts.Cock, release: new Date() },
     cum: {
       ejaculateLikelihood: 100,
       ruinLikelihood: 0,
@@ -112,6 +114,11 @@ export function unpackSave(base64Save: string): IState['settings'] {
   const playerPartsString = save.match(/:PM\d+/g)
   if (playerPartsString && playerPartsString[0]) {
     settings.player.parts = parseInt(playerPartsString[0].replace(':PP', ''), 10)
+  }
+
+  const playerReleaseString = save.match(/:PR:\d+/g)
+  if (playerReleaseString && playerReleaseString[0]) {
+      settings.player.release = new Date(playerReleaseString[0].replace(':PR', ''))
   }
 
   const ejaculateLikelihoodString = save.match(/:CE\d+/g)

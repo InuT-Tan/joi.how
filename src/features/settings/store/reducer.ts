@@ -14,6 +14,7 @@ import {
   T_SET_WALLTAKER_LINK,
   T_SET_PLAYER_GENDER,
   T_SET_PLAYER_PARTS,
+  T_SET_PLAYER_CHASTE,
 } from './actions'
 import { PornList, EventToken, HypnoMode, PlayerParts, PlayerGender } from '../../gameboard/types'
 import { events } from '../../gameboard/events/index'
@@ -32,6 +33,7 @@ export interface ISettingsState {
   player: {
     gender: PlayerGender
     parts: PlayerParts
+    release: Date
   }
   cum: {
     ejaculateLikelihood: number
@@ -51,7 +53,7 @@ export const SettingsDefaultState: ISettingsState = {
   pornList: [],
   eventList: events.map(event => event.id),
   hypnoMode: HypnoMode.JOI,
-  player: { gender: PlayerGender.Male, parts: PlayerParts.Cock },
+  player: { gender: PlayerGender.Male, parts: PlayerParts.Cock, release: new Date() },
   cum: {
     ejaculateLikelihood: 100,
     ruinLikelihood: 0,
@@ -147,6 +149,14 @@ export function SettingsReducer(state: ISettingsState = SettingsDefaultState, ac
         player: {
           ...state.player,
           parts: action.payload,
+        },
+      }
+    case T_SET_PLAYER_CHASTE:
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          release: action.payload,
         },
       }
     default:

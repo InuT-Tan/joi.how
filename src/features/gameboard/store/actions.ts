@@ -15,6 +15,7 @@ export const T_RESUME_EVENTS = 'RESUME_EVENTS'
 export const T_PAUSE_GAME = 'PAUSE_GAME'
 export const T_RESUME_GAME = 'RESUME_GAME'
 export const T_SET_VIBRATION = 'SET_VIBRATION'
+export const T_SET_RELEASE = 'SET_RELEASE'
 
 class GameBoardActionsBase {
   SetPace(newPace: number): Thunk {
@@ -98,6 +99,11 @@ class GameBoardActionsBase {
       }
     }
   }
+
+  SetRelease = (newRelease: Date) => ({
+    type: T_SET_RELEASE as typeof T_SET_RELEASE,
+    payload: newRelease,
+  })
 }
 
 export const GameBoardActions = new GameBoardActionsBase()

@@ -14,6 +14,7 @@ export const T_SET_RUIN_LIKELIHOOD = 'SET_RUIN_LIKELIHOOD'
 export const T_SET_WALLTAKER_LINK = 'SET_WALLTAKER_LINK'
 export const T_SET_PLAYER_GENDER = 'SET_PLAYER_GENDER'
 export const T_SET_PLAYER_PARTS = 'SET_PLAYER_PARTS'
+export const T_SET_PLAYER_CHASTE = 'SET_PLAYER_CHASTE'
 
 class SettingsActionsBase {
   OpenDialog = () => ({
@@ -82,6 +83,11 @@ class SettingsActionsBase {
   SetPlayerParts = (newParts: PlayerParts) => ({
     type: T_SET_PLAYER_PARTS as typeof T_SET_PLAYER_PARTS,
     payload: newParts,
+  })
+
+  SetPlayerRelease = (release: Date) => ({
+    type: T_SET_PLAYER_CHASTE as typeof T_SET_PLAYER_CHASTE,
+    payload: release,
   })
 }
 
